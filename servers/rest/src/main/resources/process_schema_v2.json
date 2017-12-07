@@ -1,0 +1,374 @@
+{
+	"type": "object",
+	"properties": {
+		"content-spec": {
+			"id": "content-spec",
+			"type": "string",
+			"default": "urn:spec://bosch.com/ppm/process-message#v2",
+			"description": "Defines what the format version is. The value is: urn:spec://bosch.com/ppm/measurement-message#v2"
+		},
+		"device": {
+			"id": "device",
+			"type": "object",
+			"description": "Contains information about the device",
+			"properties": {
+				"deviceID": {
+					"id": "deviceID",
+					"type": "string",
+					"description": "The unique ID of the device. As this is used to identify a device independently from time or location the ID itself must be stable and unique. The recommendation is to use a universally unique identifier (UUID).",
+					"maxLength": 36
+				},
+				"operationalStatus": {
+					"id": "operationalStatus",
+					"type": "string",
+					"description": "The operationalStatus describes the status of a device. It is a string matching a definition in the Production Performance Manager"
+				},
+				"metaData": {
+					"id": "metaData",
+					"type": "object",
+					"properties": {},
+					"additionalProperties": true,
+					"description": "Additional key-value pairs in a JSON structure format. Key and value must be strings"
+				}
+			},
+			"additionalProperties": false,
+			"required": [
+				"deviceID"
+			]
+		},
+		"part": {
+			"id": "part",
+			"type": "object",
+			"properties": {
+				"type": {
+					"id": "type",
+					"type": "string",
+					"enum": [
+						"SINGLE",
+						"BATCH"
+					],
+					"description": "Describes the type of the part. Type SINGLE means a single item is processed. Type BATCH means multiple items of the same type are processed.",
+					"default": "SINGLE"
+				},
+				"partTypeID": {
+					"id": "partTypeID",
+					"type": "string",
+					"description": "Identifies a part type",
+					"maxLength": 256
+				},
+				"partID": {
+					"id": "partID",
+					"type": "string",
+					"description": "Identifies a part. This ID comes from a 3rd party system and thus we have no guarantees if this is unique or not.",
+					"maxLength": 256
+				},
+				"result": {
+					"id": "result",
+					"type": "string",
+					"enum": [
+						"OK",
+						"NOK",
+						"UNKNOWN"
+					],
+					"description": "Information if the result was ok or not. This is only required if part information should be saved.",
+					"default": "UNKNOWN"
+				},
+				"code": {
+					"id": "code",
+					"type": "string",
+					"description": "The code is an addendum to the result which allows to pass information in the case the result was NOK. The value often stems from the integrated system e.g. a PLC code",
+					"maxLength": 36
+				},
+				"metaData": {
+					"id": "metaData",
+					"type": "object",
+					"properties": {},
+					"additionalProperties": true,
+					"description": "Additional key-value pairs in a JSON structure format. Key and value must be strings"
+				}
+			},
+			"required": [],
+			"additionalProperties": false
+		},
+		"process": {
+			"id": "process",
+			"type": "object",
+			"description": "Contains information about the process. If the process JSON object is set, then all information in measurements are process phases",
+			"properties": {
+				"externalProcessId": {
+					"id": "externalProcessId",
+					"type": "string",
+					"description": "The process Id identifies the process as part of long living process. Format: alphanumeric string, dash as special character, length: 36 characters. The process Id can be used to connect multiple processes in a manufacturing chain. The Id has to be set and tracked by the different devices in the chain.",
+					"maxLength": 36
+				},
+				"ts": {
+					"id": "ts",
+					"type": "string",
+					"format": "date-time",
+					"description": "Start time of the process. Format: ISO 8601 format"
+				},
+				"result": {
+					"id": "result",
+					"type": "string",
+					"enum": [
+						"OK",
+						"NOK",
+						"UNKNOWN"
+					],
+					"description": "Information if the result was ok or not. This is only required if part information should be saved.",
+					"default": "UNKNOWN"
+				},
+				"shutoffPhase": {
+					"id": "shutoffPhase",
+					"type": "string",
+					"description": "The ID of the phase that led to stop the process. The shutOffPhase is the phase of the process in which either pre-defined parameters are met to successfully finish the process or an error that stopped the process. That is not necessarily the last phase. The shutOffPhase should be sent when the last process phase is sent."
+				},
+				"program": {
+					"id": "program",
+					"type": "object",
+					"description": "Contains information about the program that was used in the process.",
+					"properties": {
+						"id": {
+							"id": "id",
+							"type": "string",
+							"description": "The ID of the program. Format: alphanumeric string (dash allowed e.g. UUID)",
+							"maxLength": 36
+						},
+						"name": {
+							"id": "name",
+							"type": "string",
+							"description": "The name of the program. Format: alphanumeric string",
+							"maxLength": 256
+						},
+						"lastChangedDate": {
+							"id": "lastChangedDate",
+							"type": "string",
+							"format": "date-time",
+							"description": "The date when the program was last changed. Format: ISO 8601 format"
+						}
+					},
+					"additionalProperties": false,
+					"required": [
+						"name"
+					]
+				},
+				"shutoffValues": {
+					"id": "shutoffValues",
+					"type": "object",
+					"description": "The shutoff values contain the values of the process that stopped the process. The shutoffValues is a JSON object where the key is the name of a Measurement Point (see also series element) and the value is a structure of different upper/lower limits and the actual value as described below.",
+					"patternProperties": {
+						"^[^$].+": {
+							"id": "shutoffValue",
+							"type": "object",
+							"properties": {
+								"$_time": {
+									"id": "$_time",
+									"type": "integer",
+									"description": "The time offset in milliseconds to the 'ts' field of the process"
+								},
+								"value": {
+									"id": "value",
+									"type": "number",
+									"description": "The final value of the process"
+								},
+								"upperError": {
+									"id": "upperError",
+									"type": "number",
+									"description": "Indicates an error if this limit is exceeded"
+								},
+								"lowerError": {
+									"id": "lowerError",
+									"type": "number",
+									"description": "Indicates an error if this limit is underrun"
+								},
+								"upperWarn": {
+									"id": "upperWarn",
+									"type": "number",
+									"description": "Indicates a warning if this limit is exceeded"
+								},
+								"lowerWarn": {
+									"id": "lowerWarn",
+									"type": "number",
+									"description": "Indicates a warning if this limit is underrun"
+								},
+								"target": {
+									"id": "target",
+									"type": "number",
+									"description": "Indicates the intented target value of the measurement"
+								}
+							},
+							"additionalProperties": false,
+							"required": []
+						}
+					}
+				},
+				"metaData": {
+					"id": "metaData",
+					"type": "object",
+					"properties": {},
+					"additionalProperties": true,
+					"description": "Additional key-value pairs in a JSON structure format. Key and value must be strings"
+				}
+			},
+			"additionalProperties": false,
+			"required": [
+				"ts"
+			]
+		},
+		"measurements": {
+			"id": "measurements",
+			"type": "array",
+			"items": {
+				"type": "object",
+				"description": "Contains the different phases of the process. Each phase represents an execution step in the process and contains information about that specific execution step. All phases should be sorted by the timestamp of the phase.",
+				"properties": {
+					"ts": {
+						"id": "ts",
+						"type": "string",
+						"format": "date-time",
+						"description": "Start time of the the data measurment in  ISO 8601 format"
+					},
+					"phase": {
+						"id": "phase",
+						"type": "string",
+						"description": "The id of the process phase. Format: alphanumeric string",
+						"maxLength": 256
+					},
+					"name": {
+						"id": "name",
+						"type": "string",
+						"description": "The name of the process phase. Format: alphanumeric string",
+						"maxLength": 256
+					},
+					"result": {
+						"id": "result",
+						"type": "string",
+						"enum": [
+							"OK",
+							"NOK",
+							"UNKNOWN"
+						],
+						"description": "Information if the result was ok or not. This is only required if part information should be saved.",
+						"default": "UNKNOWN"
+					},
+					"code": {
+						"id": "code",
+						"type": "string",
+						"description": "The code is an addendum to the result which allows to pass information in the case the result was NOK. The value often stems from the integrated system e.g. a PLC code",
+						"maxLength": 36
+					},
+					"limits": {
+						"id": "limits",
+						"type": "object",
+						"description": "Provides information about limits for data provided in the series element. The limits is an JSON object where the key is the name of a Measurement Point (see also series element) and the value is a structure of different upper/lower limits described below.",
+						"patternProperties": {
+							"^[^$].+": {
+								"type": "object",
+								"properties": {
+									"upperError": {
+										"id": "upperError",
+										"type": "number",
+										"description": "Indicates an error if this limit is exceeded"
+									},
+									"lowerError": {
+										"id": "lowerError",
+										"type": "number",
+										"description": "Indicates an error if this limit is underrun"
+									},
+									"upperWarn": {
+										"id": "upperWarn",
+										"type": "number",
+										"description": "Indicates a warning if this limit is exceeded"
+									},
+									"lowerWarn": {
+										"id": "lowerWarn",
+										"type": "number",
+										"description": "Indicates a warning if this limit is underrun"
+									},
+									"target": {
+										"id": "target",
+										"type": "number",
+										"description": "Indicates the intented target value of the measurement"
+									}
+								},
+								"additionalProperties": false
+							}
+						},
+						"required": []
+					},
+					"specialValues": {
+						"id": "specialValues",
+						"type": "array",
+						"items": {
+							"id": "specialValue",
+							"type": "object",
+							"description": "Provides information about special or interesting values during the process phase.",
+							"properties": {
+								"$_time": {
+									"id": "$_time",
+									"type": "integer",
+									"description": "The time offset in milliseconds to the 'ts' field of the measurement"
+								},
+								"value": {
+									"id": "value",
+									"type": "object",
+									"description": "Contains the actual value of interest",
+									"patternProperties": {
+										"^[^$].+": {
+											"type": "number"
+										}
+									},
+									"minProperties": 1
+								},
+								"name": {
+									"id": "name",
+									"type": "string",
+									"description": "indicates the type of the specialValue (e.g. 'endanzug', 'turningPoint' etc.)"
+								}
+							},
+							"additionalProperties": false,
+							"required": [
+								"value"
+							]
+						}
+					},
+					"series": {
+						"id": "series",
+						"type": "object",
+						"description": "The series data collected for the measurements. Every entry matches a Measurement Point of the Device Type. In the case of a time series, one column contains the time offset in milliseconds (positive values in ascending order starting with 0). In this case the value is the keyword $_time. The maximum size for the measurement value is 10 positions before the decimal point. The decimal places are truncated to 2 in the historical data.",
+						"properties": {
+							"$_time": {
+								"id": "$_time",
+								"type": "array",
+								"description": "The time offset in milliseconds (positive values in ascending order starting with 0) to the 'ts' field of the measurement",
+								"items": {
+									"type": "integer"
+								}
+							}
+						},
+						"patternProperties": {
+							"^[^$].+": {
+								"type": "array",
+								"items": {
+									"type": "number"
+								}
+							}
+						},
+						"additionalProperties": false
+					}
+				},
+				"additionalProperties": false,
+				"required": [
+					"ts",
+					"series"
+				]
+			}
+		}
+	},
+	"required": [
+		"content-spec",
+		"device",
+		"process",
+		"measurements"
+	]
+}

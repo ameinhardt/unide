@@ -44,11 +44,11 @@ public class Validator {
     static{
     	contentSpecMapping.put("urn:spec://eclipse.org/unide/machine-message#v2", "message_schema_v2.json");
     	contentSpecMapping.put("urn:spec://eclipse.org/unide/measurement-message#v2", "measurement_schema_v2.json");
-    	contentSpecMapping.put("urn:spec://eclipse.org/unide/process-message#v2", "process_message_v2.json");
-    	contentSpecMapping.put("urn:spec://bosch.com/ppm/process-message#v2", "process_message_v2.json");
+    	contentSpecMapping.put("urn:spec://eclipse.org/unide/process-message#v2", "process_schema_v2.json");
+    	contentSpecMapping.put("urn:spec://bosch.com/ppm/process-message#v2", "process_schema_v2.json");
     	contentSpecMapping.put("urn:spec://bosch.com/ppm/measurement-message#v2", "measurement_schema_v2.json");
     	contentSpecMapping.put("urn:spec://bosch.com/ppm/machine-message#v2", "message_schema_v2.json");
-    	contentSpecMapping.put("urn:spec://bosch.com/cindy/process-message#v2", "process_message_v2.json");
+    	contentSpecMapping.put("urn:spec://bosch.com/cindy/process-message#v2", "process_schema_v2.json");
     	contentSpecMapping.put("urn:spec://bosch.com/cindy/measurement-message#v2", "measurement_schema_v2.json");
     	contentSpecMapping.put("urn:spec://bosch.com/cindy/machine-message#v2", "message_schema_v2.json");
     }

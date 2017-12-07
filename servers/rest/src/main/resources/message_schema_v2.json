@@ -1,76 +1,122 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "type": "object",
-  "properties": {
-    "content-spec": {
-      "type": "string"
-    },
-    "device": {
-      "type": "object",
-      "properties": {
-        "deviceID": {
-          "type": "string",
-          "maxLength": 36
-        },
-        "operationalStatus": {
-          "type": "string"
-        },
-        "metaData": {
-          "type": "object"
-        }
-      },
-	  "additionalProperties":false,
-      "required": [
-        "deviceID"
-      ]
-    },
-    "messages": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "origin": {
-            "type": "string"
-          },
-          "ts": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "type": {
-            "enum": ["DEVICE", "TECHNICAL_INFO"]
-          },
-          "severity": {
-            "enum": ["HIGH", "MEDIUM", "LOW", "UNKNOWN"]
-          },
-          "code": {
-            "type": "string",
-            "maxLength": 36
-          },
-          "title": {
-            "type": "string",
-            "maxLength": 1000
-          },
-          "description": {
-            "type": "string",
-            "maxLength": 2000
-          },
-          "hint": {
-            "type": "string",
-            "maxLength": 2000
-          },
-          "metaData": {
-          "type": "object"
-		  }
-        },
-		"additionalProperties":false,
-        "required": [
-          "ts",
-          "code"          
-        ]
-      }
-    }
-  },
-	"additionalProperties":false,
+	"type": "object",
+	"properties": {
+		"content-spec": {
+			"id": "content-spec",
+			"type": "string",
+			"default": "urn:spec://bosch.com/ppm/measurement-message#v2",
+			"description": "Defines what the format version is. The value is: urn:spec://bosch.com/ppm/machine-message#v2"
+		},
+		"device": {
+			"id": "device",
+			"type": "object",
+			"description": "Contains information about the device",
+			"properties": {
+				"deviceID": {
+					"id": "deviceID",
+					"type": "string",
+					"description": "The unique ID of the device. As this is used to identify a device independently from time or location the ID itself must be stable and unique. The recommendation is to use a universally unique identifier (UUID).",
+					"maxLength": 36
+				},
+				"operationalStatus": {
+					"id": "operationalStatus",
+					"type": "string",
+					"description": "The operationalStatus describes the status of a device. It is a string matching a definition in the Production Performance Manager"
+				},
+				"metaData": {
+					"id": "metaData",
+					"type": "object",
+					"properties": {},
+					"additionalProperties": true,
+					"description": "Additional key-value pairs in a JSON structure format. Key and value must be strings"
+				}
+			},
+			"additionalProperties": false,
+			"required": [
+				"deviceID"
+			]
+		},
+		"messages": {
+			"id": "messages",
+			"type": "array",
+			"items": {
+				"id": "message",
+				"type": "object",
+				"description": "Collection of messages",
+				"properties": {
+					"ts": {
+						"id": "ts",
+						"format": "date-time",
+						"type": "string",
+						"description": "Start time of the the data measurment in  ISO 8601 format"
+					},
+					"origin": {
+						"id": "origin",
+						"type": "string",
+						"description": "The origin of the message if not the device identified by deviceID in the header element. Could be used to identify a subsystem or a particular sensor/part of the device where the message actually relates to."
+					},
+					"type": {
+						"id": "type",
+						"type": "string",
+						"description": "The type of message. Default is DEVICE but can be set to TECHNICAL_INFO indicating a problem with the integration of the actual device. Allowed values: DEVICE, TECHNICAL_INFO",
+						"enum": [
+							"DEVICE",
+							"TECHNICAL_INFO"
+						],
+						"default": "DEVICE"
+					},
+					"severity": {
+						"id": "severity",
+						"type": "string",
+						"description": "Severity of the message",
+						"enum": [
+							"HIGH",
+							"MEDIUM",
+							"LOW",
+							"UNKNOWN"
+						],
+						"default": "UNKNOWN"
+					},
+					"code": {
+						"id": "code",
+						"type": "string",
+						"description": "Code identifying the problem described in the message. The value often stems from the machine e.g. a PLC code. Is similar to code in measurement interface.",
+						"maxLength": 36
+					},
+					"title": {
+						"id": "title",
+						"type": "string",
+						"description": "Title of the message. If title not set the code will be stored as fallback",
+						"maxLength": 1000
+					},
+					"description": {
+						"id": "description",
+						"type": "string",
+						"description": "The description is used to describe the purpose of the message, e.g. the problem",
+						"maxLength": 2000
+					},
+					"hint": {
+						"id": "hint",
+						"type": "string",
+						"description": "In case a problem is reported, the hint can be used to point out a possible solution",
+						"maxLength": 2000
+					},
+					"metaData": {
+						"id": "metaData",
+						"type": "object",
+						"properties": {},
+						"additionalProperties": true,
+						"description": "Additional key-value pairs in a JSON structure format. Key and value must be strings"
+					}
+				},
+				"required": [
+					"ts",
+					"code"
+				]
+			}
+		}
+	},
+	"additionalProperties": false,
 	"required": [
 		"content-spec",
 		"device",

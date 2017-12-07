@@ -22,7 +22,7 @@
         "externalProcessId" : "b4927dad-58d4-4580-b460-79cefd56775b",
         "ts" : "2002-05-30T09:30:10.123+02:00",
         "result" : "NOK",
-        "shutoffPhase" : "phase 1",
+        "shutoffPhase" : "phase 2",
         "program" : {
             "id" : "1",
             "name" : "Programm 1",
@@ -30,7 +30,7 @@
         },
         "shutoffValues" : {
             "force" : {
-                "ts" : "2002-05-30T09:30:11.123+02:00",
+                "$_time" : 1050,
                 "value" : 24,
                 "upperError" : 26,
                 "lowerError" : 22
@@ -48,7 +48,7 @@
     "measurements" : [
         {
             "ts" : "2002-05-30T09:30:10.123+02:00",
-            "phase" : "phasen name 2",
+            "phase" : "phase 1",
             "name" : "500 Grad links drehen",
             "result" : "NOK",
             "code" : "0000 EE01",
@@ -61,16 +61,17 @@
                     "target" :  35  
                 }
             },
-            "specialValues" : {
-                "pressure" : {
+            "specialValues" : [{
+                "value" : {
                     "time" : 24,
-                    "value" : 44.2432
-                },
-                "force" :  {
-                    "time" : 24,
-                    "value" : 24
+                    "pressure" : 44.2432
                 }
-            },
+			}, {
+                "value" :  {
+                    "time" : 24,
+                    "force" : 24
+                }
+            }],
             "series" : {
                 "time" : [0, 23, 24],
                 "force" : [26, 23, 24],
@@ -79,27 +80,25 @@
             }
         },
         {
-            "ts" : "2002-05-30T09:30:10.123+02:00",
-            "phase" : "phasen name",
+            "ts" : "2002-05-30T09:30:11.123+02:00",
+            "phase" : "phase 2",
             "result" : "OK",    
             "limits" : {
                 "force" : {
-                    "upperError" : [27, 24, 25],
-                    "lowerError" : [25, 22, 23]
+                    "upperError" : 27,
+                    "lowerError" : 25
                 },
                 "pressure" : {
-                    "upperError" : [54, 48, 46],
-                    "lowerError" : [50, 44, 42]
+                    "upperError" : 54,
+                    "lowerError" : 50
                 }
             },
-            "specialValues" : {
-                "pressure" : {
-                    "value" : 24
-                },
-                "force" : {
-                    "value": 50
+            "specialValues" : [{
+                "value" : {
+                    "pressure" : 24,
+                    "pressure": 50
                 }
-            },
+            }],
             "series" : {
                 "time" : [30, 36, 42],
                 "force" : [26, 23, 24],
